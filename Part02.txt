@@ -1,0 +1,99 @@
+create table Lecturer(
+Lecturer_id varchar(15) not null primary key,
+F_Name char(150),
+L_Name char(150),
+Gender char(10),
+Contact Number(15),
+Email varchar(50)
+);
+
+create table Department(
+Dep_id varchar(20) not null primary key,
+Name char(150),
+Location varchar(200),
+Dean_ID varchar(20),
+Admin_ID varchar(20)
+);
+
+CREATE TABLE Technical_Officer (
+    TO_ID VARCHAR(25) NOT NULL PRIMARY KEY,
+    Email VARCHAR(30),
+    F_Name CHAR(60),
+    L_Name CHAR(60),
+    Gender CHAR(15),
+    Contact_Number VARCHAR(15),
+    Dep_ID varchar(20)
+);
+
+create table Attendance(
+Attendance_id varchar (25) not null primary key,
+Time varchar(15),
+Status varchar(20),
+Type varchar(50),
+Hours int(50),
+Date date,
+Course_ID varchar(20)
+); 
+
+INSERT INTO Lecturer (Lecturer_id, F_Name, L_Name, Gender, Contact_Number, Email) VALUES
+('LEC001', 'Sanduni', 'Perera', 'Female', '0771234567', 'sanduni.perera@kln.ac.lk'),
+('LEC002', 'Chathura', 'Wijesinghe', 'Male', '0719876543', 'chathura.wijesinghe@uom.lk'),
+('LEC003', 'Iresha', 'Jayawardena', 'Female', '0752468135', 'iresha.jayawardena@uoc.lk'),
+('LEC004', 'Nuwan', 'Dissanayake', 'Male', '0761357924', 'nuwan.dissanayake@uom.lk'),
+('LEC005', 'Thilini', 'Ranasinghe', 'Female', '0723692581', 'thilini.ranasinghe@kln.ac.lk'),
+('LEC006', 'Pasindu', 'Rathnayaka', 'Male', '0748523691', 'pasindu.rathnayaka@uop.lk'),
+('LEC007', 'Dilshi', 'Fernando', 'Female', '0789632145', 'dilshi.fernando@uoc.lk'),
+('LEC008', 'Supun', 'Jayasena', 'Male', '0707412589', 'supun.jayasena@uom.lk'),
+('LEC009', 'Nadeesha', 'Gamage', 'Female', '0773698521', 'nadeesha.gamage@uoc.lk'),
+('LEC010', 'Harsha', 'Senanayake', 'Male', '0712583694', 'harsha.senanayake@kln.ac.lk');
+
+INSERT INTO Department (Dep_id, Name, Location) VALUES
+('DEP001', 'Information Technology', 'Colombo Main Building'),
+('DEP002', 'Computer Science', 'Peradeniya Campus'),
+('DEP003', 'Software Engineering', 'Moratuwa Engineering Tower'),
+('DEP004', 'Cyber Security', 'Kandy Tech Complex');
+
+
+INSERT INTO Technical_Officer (TO_ID, Email, F_Name, L_Name, Gender, Contact_Number) VALUES
+('TO001', 'manoj.silva@uoc.lk', 'Manoj', 'Silva', 'Male', '0771122334'),
+('TO002', 'hiruni.dharmasena@kln.ac.lk', 'Hiruni', 'Dharmasena', 'Female', '0712233445'),
+('TO003', 'kasun.fernando@uom.lk', 'Kasun', 'Fernando', 'Male', '0753344556'),
+('TO004', 'pavithra.jayasekara@uop.lk', 'Pavithra', 'Jayasekara', 'Female', '0724455667'),
+('TO005', 'sahan.bandara@uoc.lk', 'Sahan', 'Bandara', 'Male', '0765566778'),
+('TO006', 'malsha.herath@kln.ac.lk', 'Malsha', 'Herath', 'Female', '0746677889'),
+('TO007', 'dilshan.weerasinghe@uom.lk', 'Dilshan', 'Weerasinghe', 'Male', '0787788990'),
+('TO008', 'gayathri.rathnayake@uoc.lk', 'Gayathri', 'Rathnayake', 'Female', '0708899001'),
+('TO009', 'ramesh.dealwis@uop.lk', 'Ramesh', 'de Alwis', 'Male', '0729900112'),
+('TO010', 'samadhi.fernando@kln.ac.lk', 'Samadhi', 'Fernando', 'Female', '0751011223');
+
+
+
+INSERT INTO Attendance (Attendance_id, Time, Status, Type, Hours, Date) VALUES
+('ATT001', '08:00', 'Present', 'Lecture', 3, '2025-10-01'),
+('ATT002', '10:15', 'Present', 'Practical', 2, '2025-10-01'),
+('ATT003', '09:00', 'Absent', 'Lecture', 3, '2025-10-02'),
+('ATT004', '11:30', 'Present', 'Seminar', 2, '2025-10-02'),
+('ATT005', '08:45', 'Present', 'Lecture', 3, '2025-10-03'),
+('ATT006', '13:00', 'Late', 'Workshop', 2, '2025-10-03'),
+('ATT007', '14:15', 'Present', 'Tutorial', 1, '2025-10-04'),
+('ATT008', '09:30', 'Present', 'Lab Session', 2, '2025-10-04'),
+('ATT009', '08:00', 'Absent', 'Lecture', 3, '2025-10-05'),
+('ATT010', '10:00', 'Present', 'Meeting', 1, '2025-10-05'),
+('ATT011', '13:00', 'Present', 'Practical', 2, '2025-10-06'),
+('ATT012', '08:30', 'Late', 'Lecture', 3, '2025-10-06'),
+('ATT013', '09:45', 'Present', 'Workshop', 2, '2025-10-07'),
+('ATT014', '11:00', 'Absent', 'Lecture', 3, '2025-10-07'),
+('ATT015', '08:00', 'Present', 'Lecture', 3, '2025-10-08'),
+('ATT016', '09:15', 'Present', 'Seminar', 1, '2025-10-08'),
+('ATT017', '10:30', 'Late', 'Tutorial', 2, '2025-10-09'),
+('ATT018', '13:30', 'Present', 'Lecture', 3, '2025-10-09'),
+('ATT019', '09:00', 'Present', 'Workshop', 2, '2025-10-10'),
+('ATT020', '08:00', 'Absent', 'Lecture', 3, '2025-10-10'),
+('ATT021', '10:00', 'Present', 'Lab Session', 2, '2025-10-11'),
+('ATT022', '09:30', 'Present', 'Tutorial', 1, '2025-10-11'),
+('ATT023', '14:00', 'Present', 'Lecture', 3, '2025-10-12'),
+('ATT024', '08:15', 'Late', 'Workshop', 2, '2025-10-12'),
+('ATT025', '10:45', 'Present', 'Lecture', 3, '2025-10-13');
+
+
+
