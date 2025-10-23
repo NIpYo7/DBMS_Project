@@ -1,0 +1,59 @@
+ALTER TABLE Department
+ADD CONSTRAINT fk_department_dean FOREIGN KEY (Dean_ID) REFERENCES Dean(Dean_ID);
+
+ALTER TABLE Department
+ADD CONSTRAINT fk_department_admin FOREIGN KEY (Admin_ID) REFERENCES Admin(Admin_ID);
+
+ALTER TABLE Student
+ADD CONSTRAINT fk_student_department FOREIGN KEY (Dep_ID) REFERENCES Department(Dep_ID);
+
+ALTER TABLE Technical_Officer
+ADD CONSTRAINT fk_technical_officer_department FOREIGN KEY (Dep_ID) REFERENCES Department(Dep_ID);
+
+ALTER TABLE Attendance
+ADD CONSTRAINT fk_attendance_course FOREIGN KEY (Course_Code) REFERENCES Course(Course_Code);
+
+ALTER TABLE Stu_Course
+ADD CONSTRAINT fk_stucourse_student FOREIGN KEY (Reg_No) REFERENCES Student(Reg_No);
+
+ALTER TABLE Stu_Course
+ADD CONSTRAINT fk_stucourse_course FOREIGN KEY (Course_Code) REFERENCES Course(Course_Code);
+
+ALTER TABLE Stu_Attendance
+ADD CONSTRAINT fk_stuattendance_student FOREIGN KEY (Reg_No) REFERENCES Student(Reg_No);
+
+ALTER TABLE Stu_Attendance
+ADD CONSTRAINT fk_stuattendance_attendance FOREIGN KEY (Attendance_ID) REFERENCES Attendance(Attendance_ID);
+
+ALTER TABLE Course_Lecture
+ADD CONSTRAINT fk_courselecture_lecturer FOREIGN KEY (Lecturer_ID) REFERENCES Lecturer(Lecturer_ID);
+
+ALTER TABLE Course_Lecture
+ADD CONSTRAINT fk_courselecture_course FOREIGN KEY (Course_Code) REFERENCES Course(Course_Code);
+
+ALTER TABLE Lecturer_Department
+ADD CONSTRAINT fk_lecturerdepartment_lecturer FOREIGN KEY (Lecturer_ID) REFERENCES Lecturer(Lecturer_ID);
+
+ALTER TABLE Lecturer_Department
+ADD CONSTRAINT fk_lecturerdepartment_department FOREIGN KEY (Dep_ID) REFERENCES Department(Dep_ID);
+
+ALTER TABLE Session
+ADD CONSTRAINT fk_session_course FOREIGN KEY (Course_Code) REFERENCES Course(Course_Code);
+
+ALTER TABLE Session
+ADD CONSTRAINT fk_session_lecturer FOREIGN KEY (Lecturer_ID) REFERENCES Lecturer(Lecturer_ID);
+
+ALTER TABLE Repeat_Student
+ADD CONSTRAINT fk_repeatstudent_student FOREIGN KEY (Reg_No) REFERENCES Student(Reg_No);
+
+ALTER TABLE Proper_Student
+ADD CONSTRAINT fk_properstudent_student FOREIGN KEY (Reg_No) REFERENCES Student(Reg_No);
+
+ALTER TABLE Mark
+ADD CONSTRAINT fk_mark_student FOREIGN KEY (Reg_No) REFERENCES Student(Reg_No);
+
+ALTER TABLE Course_Mark
+ADD CONSTRAINT fk_coursemark_course FOREIGN KEY (Course_Code) REFERENCES Course(Course_Code);
+
+ALTER TABLE Course_Mark
+ADD CONSTRAINT fk_coursemark_mark FOREIGN KEY (Mark_ID) REFERENCES Mark(Mark_ID);
