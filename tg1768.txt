@@ -1,0 +1,39 @@
+CREATE TABLE stu_course(
+     Reg_no VARCHAR(15) NOT NULL ,
+	 Course_code VARCHAR(15) NOT NULL ,
+	 
+	 PRIMARY KEY(Reg_no,Course_code)
+);
+
+
+
+
+
+CREATE TABLE  Stu_Attendence(
+     Reg_no VARCHAR(15),
+	 Attendence_id VARCHAR(15),
+	 
+     PRIMARY KEY(Reg_no,Attendence_id)
+);
+
+
+
+
+CREATE TABLE Course_Lecture(
+      Lecture_id VARCHAR(15),
+	  Course_id VARCHAR(15),
+	  
+	  PRIMARY KEY(Lecture_id,Course_id)
+  
+);
+
+
+
+
+CREATE TABLE Lecture_Departnment(
+      Lecture_id VARCHAR (15),
+	  Dep_id VARCHAR (15),
+	  
+	  PRIMARY KEY (Lecture_id,Dep_id)
+
+);
