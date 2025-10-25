@@ -1,0 +1,224 @@
+----------------------------------procedures and Views for Other Reqirements----------------------------------------------------
+
+1. Grading and Marks Presentation
+
+DELIMITER //
+
+CREATE PROCEDURE Calculate_Student_Grade (
+    IN p_Reg_No VARCHAR(20),
+    IN p_Course_Code VARCHAR(10)
+)
+BEGIN
+    DECLARE v_Total_Mark DECIMAL(5, 2);
+    DECLARE v_Student_Status VARCHAR(10);
+    DECLARE v_Medical_Status VARCHAR(20);
+    DECLARE v_Final_Grade CHAR(2);
+    DECLARE v_Grade_Point DECIMAL(3, 2);
+    DECLARE v_Credits DECIMAL(2, 1);
+
+    -- 1. Get Marks, Student Status, and Medical Status
+    SELECT
+        (m.CA_Marks + m.Mid_Marks + m.Final_Marks),
+        s.Status,
+        m.Medical_Status,
+        c.Credits
+    INTO
+        v_Total_Mark, v_Student_Status, v_Medical_Status, v_Credits
+    FROM
+        Marks m
+    JOIN
+        Student s ON m.Reg_No = s.Reg_No
+    JOIN 
+        Course c ON m.Course_Code = c.Course_Code
+    WHERE
+        m.Reg_No = p_Reg_No AND m.Course_Code = p_Course_Code;
+        
+    -- 2. Handle Special Statuses (Medical, Suspended)
+    IF v_Medical_Status IS NOT NULL THEN
+        SET v_Final_Grade = 'MC';
+        SET v_Grade_Point = NULL;
+    ELSEIF v_Student_Status = 'Suspended' THEN
+        SET v_Final_Grade = 'WH';
+        SET v_Grade_Point = NULL;
+    ELSE
+        -- 3. Get Grade from Grading Scheme
+        SELECT Letter_Grade, Grade_Point
+        INTO v_Final_Grade, v_Grade_Point
+        FROM Grading_Scheme
+        WHERE v_Total_Mark BETWEEN Min_Mark AND Max_Mark;
+
+        -- 4. Handle Repeat Status (Maximum Grade 'C' cap)
+        IF v_Student_Status = 'Repeat' AND v_Total_Mark >= 50 THEN -- Assuming 'C' is awarded for >= 50 marks
+            SELECT Letter_Grade, Grade_Point
+            INTO v_Final_Grade, v_Grade_Point
+            FROM Grading_Scheme
+            WHERE Letter_Grade = 'C'; -- or the lowest passing grade in your scheme
+        END IF;
+    END IF;
+
+    -- Output the result
+    SELECT
+        p_Reg_No AS Reg_No,
+        p_Course_Code AS Course_Code,
+        v_Total_Mark AS Total_Marks,
+        v_Final_Grade AS Final_Grade,
+        v_Grade_Point AS Grade_Point,
+        v_Credits AS Credits;
+        
+END //
+
+DELIMITER ;
+
+
+CREATE VIEW Marks_By_Assessment AS
+SELECT
+    m.Reg_No,
+    m.Course_Code,
+    m.CA_Marks,
+    m.Mid_Marks,
+    m.Final_Marks,
+    s.Status AS Student_Status,
+    m.Medical_Status
+FROM
+    Marks m
+JOIN
+    Student s ON m.Reg_No = s.Reg_No;
+
+
+
+
+Purpose,Example Call,Expected Output (Simulated)
+Get Grade for a Proper Student,"CALL Calculate_Student_Grade('S005', 'ICT1101');","S005, ICT1101, Total_Marks: 78.5, Final_Grade: B+, Grade_Point: 3.3"
+Get Grade for a Student on Medical,"CALL Calculate_Student_Grade('S010', 'CMS1202');","S010, CMS1202, Total_Marks: NULL, Final_Grade: MC, Grade_Point: NULL"
+Get Grade for a Suspended Student,"CALL Calculate_Student_Grade('S022', 'ICT1101');","S022, ICT1101, Total_Marks: 85.0, Final_Grade: WH, Grade_Point: NULL"
+Get Grade for a Repeat Student,"CALL Calculate_Student_Grade('S030', 'CMS1202');","S030, CMS1202, Total_Marks: 95.0, Final_Grade: C (due to cap), Grade_Point: 2.0"
+
+
+
+
+
+2. SGPA and CGPA Calculation
+
+DELIMITER //
+
+CREATE PROCEDURE Calculate_Student_GPA (
+    IN p_Reg_No VARCHAR(20),
+    IN p_Batch_Or_Semester VARCHAR(10) -- Use this to filter for SGPA
+)
+BEGIN
+    -- Temporary table to hold results for the specified scope
+    CREATE TEMPORARY TABLE IF NOT EXISTS Temp_GPA_Results (
+        Reg_No VARCHAR(20),
+        Course_Code VARCHAR(10),
+        Total_Marks DECIMAL(5, 2),
+        Final_Grade CHAR(2),
+        Grade_Point DECIMAL(3, 2),
+        Credits DECIMAL(2, 1)
+    );
+    
+    -- NOTE: In a real system, you would insert into Temp_GPA_Results 
+    -- by calling the Calculate_Student_Grade procedure for every course 
+    -- the student has taken in the specified batch/semester.
+    -- For this example, we'll assume a 'Final_Grades' table exists:
+    
+    -- Fetch data for SGPA calculation (filtering by batch/semester)
+    SELECT 
+        SUM(Grade_Point * Credits) / SUM(Credits) 
+    INTO 
+        @SGPA
+    FROM 
+        Final_Grades fg -- ASSUMPTION: A table storing final calculated grades
+    WHERE 
+        fg.Reg_No = p_Reg_No AND fg.Batch_Semester = p_Batch_Or_Semester
+        AND fg.Final_Grade NOT IN ('MC', 'WH'); -- Only count valid grades
+
+    -- Fetch data for CGPA calculation (filtering by entire history)
+    SELECT 
+        SUM(Grade_Point * Credits) / SUM(Credits) 
+    INTO 
+        @CGPA
+    FROM 
+        Final_Grades fg
+    WHERE 
+        fg.Reg_No = p_Reg_No
+        AND fg.Final_Grade NOT IN ('MC', 'WH'); -- Only count valid grades
+
+    -- Output the result
+    SELECT
+        p_Reg_No AS Reg_No,
+        p_Batch_Or_Semester AS Batch_Or_Semester,
+        IFNULL(@SGPA, 0.00) AS SGPA,
+        IFNULL(@CGPA, 0.00) AS CGPA;
+        
+    -- Drop the temporary table when done
+    DROP TEMPORARY TABLE IF EXISTS Temp_GPA_Results;
+        
+END //
+
+DELIMITER ;
+
+Purpose,Example Call,Expected Output (Simulated)
+Get SGPA for Semester 1,"CALL Calculate_Student_GPA('S005', 'Semester 1');","S005, Semester 1, SGPA: 3.55, CGPA: 3.55"
+Get CGPA after Semester 3,"CALL Calculate_Student_GPA('S005', 'Semester 3');","S005, Semester 3, SGPA: 3.20, CGPA: 3.42"
+Check GPA for a new student,"CALL Calculate_Student_GPA('S100', 'Semester 1');","S100, Semester 1, SGPA: 0.00, CGPA: 0.00"
+
+
+
+
+
+
+3. Whole Batch Summary
+
+CREATE VIEW Batch_Summary_Grades AS
+SELECT
+    fg.Reg_No,
+    fg.Course_Code,
+    fg.Batch_Semester,
+    fg.Final_Grade,
+    fg.Grade_Point,
+    s.Status AS Student_Status
+FROM
+    Final_Grades fg -- ASSUMPTION: A table storing final calculated grades
+JOIN
+    Student s ON fg.Reg_No = s.Reg_No
+ORDER BY
+    fg.Batch_Semester, fg.Reg_No, fg.Course_Code;
+
+DELIMITER //
+
+CREATE PROCEDURE Get_Batch_Average_GPA (
+    IN p_Batch_Code VARCHAR(10)
+)
+BEGIN
+    SELECT
+        p_Batch_Code AS Batch_Code,
+        AVG(Total_Credit_Points / Total_Credits) AS Average_CGPA
+    FROM
+        ( -- Subquery to calculate each student's CGPA
+        SELECT
+            Reg_No,
+            SUM(Grade_Point * Credits) AS Total_Credit_Points,
+            SUM(Credits) AS Total_Credits
+        FROM
+            Final_Grades fg
+        JOIN
+            Student s ON fg.Reg_No = s.Reg_No
+        WHERE
+            s.Batch_Code = p_Batch_Code -- Assuming Student table has a Batch_Code field
+            AND fg.Final_Grade NOT IN ('MC', 'WH')
+        GROUP BY
+            Reg_No
+        ) AS Student_GPAs;
+END //
+
+DELIMITER ;
+
+
+Purpose,Example Call,Expected Output (Simulated)
+Average CGPA for the 2024 Batch,CALL Get_Batch_Average_GPA('B2024');,"Batch_Code: B2024, Average_CGPA: 3.15"
+Average CGPA for the 2023 Batch,CALL Get_Batch_Average_GPA('B2023');,"Batch_Code: B2023, Average_CGPA: 3.02"
+
+
+----Procedure Name,Example Call,Purpose
+Get_Eligibility_Status_Not_Met,CALL Get_Eligibility_Status_Not_Met();,Retrieves all students with 'Not Eligible' status.---------
+
