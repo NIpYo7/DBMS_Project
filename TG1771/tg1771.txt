@@ -12,7 +12,7 @@ CREATE TABLE Dean (
     Dean_ID VARCHAR(10) PRIMARY KEY NOT NULL,
     F_Name VARCHAR(30),
     L_Name VARCHAR(30),
-    Email VARCHAR(40)
+    Email VARCHAR(40)  
 );
 
 CREATE TABLE Department (
