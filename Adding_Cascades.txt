@@ -1,0 +1,75 @@
+-- 1. STU_ATTENDANCE (Junction Table)
+-- Drop constraints linking Stu_Attendance to Student and Attendance
+ALTER TABLE Stu_Attendance DROP FOREIGN KEY fk_stuattendance_student;
+ALTER TABLE Stu_Attendance DROP FOREIGN KEY fk_stuattendance_attendance;
+
+-- 2. ATTENDANCE (Session Table)
+-- Assuming a constraint named fk_attendance_course exists for Course_Code
+ALTER TABLE Attendance DROP FOREIGN KEY fk_attendance_course; 
+
+-- 3. STUDENT
+-- Assuming a constraint named fk_student_department exists for Dep_ID
+ALTER TABLE Student DROP FOREIGN KEY fk_student_department;
+
+-- 4. COURSE
+-- Assuming a constraint named fk_course_department exists for Dep_ID
+ALTER TABLE Course DROP FOREIGN KEY fk_course_department;
+
+-- 5. DEPARTMENT
+-- Drop constraint linking Department to Dean
+ALTER TABLE Department DROP FOREIGN KEY fk_department_dean;
+
+-- 6. SESSION
+-- Assuming constraints named fk_session_course and fk_session_lecturer exist
+ALTER TABLE Session DROP FOREIGN KEY fk_session_course;
+ALTER TABLE Session DROP FOREIGN KEY fk_session_lecturer;
+
+
+
+
+-- 1. DEAN -> DEPARTMENT
+ALTER TABLE Department
+ADD CONSTRAINT fk_department_dean FOREIGN KEY (Dean_ID) REFERENCES Dean(Dean_ID)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+-- 2. DEPARTMENT -> COURSE
+ALTER TABLE Course
+ADD CONSTRAINT fk_course_department FOREIGN KEY (Dep_ID) REFERENCES Department(Dep_ID)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+-- 3. DEPARTMENT -> STUDENT
+ALTER TABLE Student
+ADD CONSTRAINT fk_student_department FOREIGN KEY (Dep_ID) REFERENCES Department(Dep_ID)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+-- 4. COURSE -> ATTENDANCE
+ALTER TABLE Attendance
+ADD CONSTRAINT fk_attendance_course FOREIGN KEY (Course_Code) REFERENCES Course(Course_Code)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+-- 5. LECTURER / COURSE -> SESSION
+ALTER TABLE Session
+ADD CONSTRAINT fk_session_course FOREIGN KEY (Course_Code) REFERENCES Course(Course_Code)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+ALTER TABLE Session
+ADD CONSTRAINT fk_session_lecturer FOREIGN KEY (Lecturer_ID) REFERENCES Lecturer(Lecturer_ID)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+-- 6. STUDENT -> STU_ATTENDANCE
+ALTER TABLE Stu_Attendance
+ADD CONSTRAINT fk_stuattendance_student FOREIGN KEY (Reg_No) REFERENCES Student(Reg_No)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
+
+-- 7. ATTENDANCE -> STU_ATTENDANCE
+ALTER TABLE Stu_Attendance
+ADD CONSTRAINT fk_stuattendance_attendance FOREIGN KEY (Attendance_ID) REFERENCES Attendance(Attendance_ID)
+ON UPDATE CASCADE
+ON DELETE CASCADE;
