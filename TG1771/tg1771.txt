@@ -1,4 +1,4 @@
-CREATE DATABASE faculty_of_technology;
+CREATE DATABASE IF NOT EXISTS faculty_of_technology;
 USE faculty_of_technology;
 
 CREATE TABLE Admin (
@@ -8,6 +8,21 @@ CREATE TABLE Admin (
     Email VARCHAR(40)
 );
 
+CREATE TABLE Dean (
+    Dean_ID VARCHAR(10) PRIMARY KEY NOT NULL,
+    F_Name VARCHAR(30),
+    L_Name VARCHAR(30),
+    Email VARCHAR(40)
+);
+
+CREATE TABLE Department (
+    Dep_ID VARCHAR(20) PRIMARY KEY NOT NULL,
+    Name CHAR(150),
+    Location VARCHAR(200),
+    Dean_ID VARCHAR(10),
+    Admin_ID VARCHAR(10)
+);
+
 CREATE TABLE Student (
     Reg_No VARCHAR(10) PRIMARY KEY NOT NULL,
     F_Name VARCHAR(30),
@@ -15,11 +30,5 @@ CREATE TABLE Student (
     DOB DATE,
     Stu_Email VARCHAR(40),
     Gender VARCHAR(6),
-    Dep_ID VARCHAR(10)
-);
-
-CREATE TABLE Course (
-    Course_ID VARCHAR(7) PRIMARY KEY NOT NULL,
-    Course_Name VARCHAR(40),
-    Credit INT
+    Dep_ID VARCHAR(20)
 );
