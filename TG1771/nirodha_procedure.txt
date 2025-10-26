@@ -1,0 +1,142 @@
+
+DELIMITER $$
+
+CREATE PROCEDURE Get_CA_Eligibility(
+    IN p_RegNo VARCHAR(10),
+    IN p_CourseCode VARCHAR(10)
+)
+BEGIN
+    IF p_RegNo IS NOT NULL AND p_CourseCode IS NOT NULL THEN
+        SELECT * 
+        FROM ca_eligibility
+        WHERE Reg_No = p_RegNo
+          AND Course_Code = p_CourseCode;
+
+    ELSEIF p_RegNo IS NOT NULL AND p_CourseCode IS NULL THEN
+        SELECT Reg_No,
+               COUNT(Course_Code) AS Total_Courses,
+               SUM(CASE WHEN CA_Eligibility_Status='Eligible' THEN 1 ELSE 0 END) AS Eligible_Courses,
+               SUM(CASE WHEN CA_Eligibility_Status='Not Eligible' THEN 1 ELSE 0 END) AS Not_Eligible_Courses
+        FROM ca_eligibility
+        WHERE Reg_No = p_RegNo
+        GROUP BY Reg_No;
+
+    ELSE
+        SELECT * 
+        FROM ca_eligibility;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE Get_Final_Marks(
+    IN p_RegNo VARCHAR(10)
+)
+BEGIN
+    IF p_RegNo IS NOT NULL THEN
+        SELECT 
+            Reg_No,
+            Course_Code,
+            (Mid_Mark + Assignment1_Mark + Assignment2_Mark +
+             (Quiz1_Mark + Quiz2_Mark + Quiz3_Mark - LEAST(Quiz1_Mark, Quiz2_Mark, Quiz3_Mark)) +
+             End_Mark) AS Final_Mark
+        FROM mark
+        WHERE Reg_No = p_RegNo;
+    ELSE
+        SELECT 
+            Reg_No,
+            Course_Code,
+            (Mid_Mark + Assignment1_Mark + Assignment2_Mark +
+             (Quiz1_Mark + Quiz2_Mark + Quiz3_Mark - LEAST(Quiz1_Mark, Quiz2_Mark, Quiz3_Mark)) +
+             End_Mark) AS Final_Mark
+        FROM mark
+        ORDER BY Reg_No, Course_Code;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE Generate_Result_Sheet(IN p_RegNo VARCHAR(10))
+BEGIN
+    IF p_RegNo IS NOT NULL THEN
+        SELECT * 
+        FROM result_sheet
+        WHERE Reg_No = p_RegNo;
+    ELSE
+        SELECT * 
+        FROM result_sheet;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE Student_Grades(IN p_RegNo VARCHAR(10))
+BEGIN
+    IF p_RegNo IS NOT NULL THEN
+        SELECT 
+            sg.Reg_No,
+            MAX(CASE WHEN sg.Course_Code = 'ENG1222' THEN sg.Grade END) AS ENG1222_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1212' THEN sg.Grade END) AS ICT1212_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1222' THEN sg.Grade END) AS ICT1222_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1233' THEN sg.Grade END) AS ICT1233_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1242' THEN sg.Grade END) AS ICT1242_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1253' THEN sg.Grade END) AS ICT1253_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'TCS1212' THEN sg.Grade END) AS TCS1212_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'TMS1233' THEN sg.Grade END) AS TMS1233_Grade
+        FROM student_grades sg
+        WHERE sg.Reg_No = p_RegNo
+        GROUP BY sg.Reg_No;
+    ELSE
+        SELECT 
+            sg.Reg_No,
+            MAX(CASE WHEN sg.Course_Code = 'ENG1222' THEN sg.Grade END) AS ENG1222_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1212' THEN sg.Grade END) AS ICT1212_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1222' THEN sg.Grade END) AS ICT1222_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1233' THEN sg.Grade END) AS ICT1233_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1242' THEN sg.Grade END) AS ICT1242_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'ICT1253' THEN sg.Grade END) AS ICT1253_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'TCS1212' THEN sg.Grade END) AS TCS1212_Grade,
+            MAX(CASE WHEN sg.Course_Code = 'TMS1233' THEN sg.Grade END) AS TMS1233_Grade
+        FROM student_grades sg
+        GROUP BY sg.Reg_No;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
