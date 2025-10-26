@@ -1,31 +1,38 @@
-SHOW DATABASES;
 
-CREATE DATABASE FOT_Management;
+USE faculty_of_technology;
 
-USE FOT_Management;
+--create users and assign roles with appropriate privileges
+CREATE USER 'admin_user'@'localhost' IDENTIFIED BY 'Admin@123';
+GRANT ALL PRIVILEGES ON faculty_of_technology.* TO 'admin_user'@'localhost' WITH GRANT OPTION;
 
---Creating Users
+--cresate dean user
+CREATE USER 'dean_user'@'localhost' IDENTIFIED BY 'Dean@123';
+GRANT ALL PRIVILEGES ON faculty_of_technology.* TO 'dean_user'@'localhost';
 
-CREATE USER 'admin'@'localhost' IDENTIFIED BY 'Admin@123';
-CREATE USER 'dean'@'localhost' IDENTIFIED BY 'Dean@123';
-CREATE USER 'lecturer'@'localhost' IDENTIFIED BY 'Lecturer@123';
-CREATE USER 'technical_officer'@'localhost' IDENTIFIED BY 'Tech@123';
-CREATE USER 'student'@'localhost' IDENTIFIED BY 'Student@123';
+--create lecturer user
+CREATE USER 'lecturer_user'@'localhost' IDENTIFIED BY 'Lecturer@123';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES 
+ON faculty_of_technology.* TO 'lecturer_user'@'localhost';
 
---Granting Privileges to Users
+--create to user
+CREATE USER 'to_user'@'localhost' IDENTIFIED BY 'TO@123';
+GRANT SELECT, INSERT, UPDATE 
+ON faculty_of_technology.Attendance TO 'to_user'@'localhost';
+GRANT SELECT, INSERT, UPDATE 
+ON faculty_of_technology.Stu_Attendance TO 'to_user'@'localhost';
 
---admin User Privileges
-GRANT ALL PRIVILEGES ON FOT_Management.* TO 'admin'@'localhost' WITH GRANT OPTION;
+--create student user
+CREATE USER 'student_user'@'localhost' IDENTIFIED BY 'Student@123';
+GRANT SELECT ON faculty_of_technology.Mark TO 'student_user'@'localhost';
+GRANT SELECT ON faculty_of_technology.ca_eligibility TO 'student_user'@'localhost';
+GRANT SELECT ON faculty_of_technology.course_eligibility_summary TO 'student_user'@'localhost';
+GRANT SELECT ON faculty_of_technology.final_mark TO 'student_user'@'localhost';
+GRANT SELECT ON faculty_of_technology.result_sheet TO 'student_user'@'localhost';
+GRANT SELECT ON faculty_of_technology.student_attendance_hours TO 'student_user'@'localhost';
+GRANT SELECT ON faculty_of_technology.student_grades TO 'student_user'@'localhost';
 
---dean User Privileges
-GRANT ALL PRIVILEGES ON FOT_Management.* TO 'dean'@'localhost';
+FLUSH PRIVILEGES;
 
---lecturer User Privileges
-GRANT ALL PRIVILEGES ON FOT_Management.* TO 'lecturer'@'localhost';
-REVOKE GRANT OPTION ON FOT_Management.* FROM 'lecturer'@'localhost';
-REVOKE CREATE USER ON *.* FROM 'lecturer'@'localhost';
 
---technical_officer User Privileges
 
---student User Privileges
-
+  
